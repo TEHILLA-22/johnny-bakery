@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Cart - Jevemy Styles Lives</title>
+   <style>
+    body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f9f9f9;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.product, .cart-item {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 4px;
+    background-color: #f1f1f1;
+    display: flex;
+    align-items: center;
+}
+
+.cart-item img.cart-item-image {
+    max-width: 100px;
+    margin-right: 10px;
+}
+
+.cart-item-details {
+    flex-grow: 1;
+}
+
+button, .back-btn {
+    padding: 10px 20px;
+    margin-top: 10px;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+button:hover, .back-btn:hover {
+    background-color: #0056b3;
+}
+
+.clear-btn {
+    background-color: #dc3545;
+}
+
+.clear-btn:hover {
+    background-color: #c82333;
+}
+
+a {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+a:hover {
+    background-color: #218838;
+}
+
+   </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Your Cart</h1>
+        <div id="cart"></div>
+        <button class="clear-btn" onclick="clearCart()">Clear Cart</button>
+        <a href="index.html" class="back-btn">Continue Shopping</a>
+    </div>
+
+    <script>
+        const products = {
+            1: { name: 'Product 1', image: 'images/product1.jpg' },
+            2: { name: 'Product 2', image: 'images/product2.jpg' }
+            // Add more products as needed
+        };
+
+        function getCart() {
+            return JSON.parse(localStorage.getItem('cart')) || [];
+        }
+
+        function updateCartDisplay() {
+            const cart = getCart();
+            const cartDiv = document.getElementById('cart');
+            cartDiv.innerHTML = '';
+
+            if (cart.length === 0) {
+                cartDiv.innerHTML = '<p>Your cart is empty.</p>';
+                return;
+            }
+
+            cart.forEach(item => {
+                const product = products[item.id];
+                const productDiv = document.createElement('div');
+                productDiv.className = 'cart-item';
+                productDiv.innerHTML = `
+                    <img src="${product.image}" alt="${product.name}" class="cart-item-image">
+                    <div class="cart-item-details">
+                        <p>${product.name} - Quantity: ${item.quantity}</p>
+                        <button class="remove-btn" onclick="removeFromCart(${item.id})">Remove One</button>
+                    </div>
+                `;
+                cartDiv.appendChild(productDiv);
+            });
+        }
+
+        function removeFromCart(id) {
+            let cart = getCart();
+            const productIndex = cart.findIndex(product => product.id === id);
+            if (productIndex > -1) {
+                if (cart[productIndex].quantity > 1) {
+                    cart[productIndex].quantity -= 1;
+                } else {
+                    cart.splice(productIndex, 1);
+                }
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCartDisplay();
+            }
+        }
+
+        function clearCart() {
+            localStorage.removeItem('cart');
+            updateCartDisplay();
+        }
+
+        window.onload = updateCartDisplay;
+    </script>
+</body>
+</html>
